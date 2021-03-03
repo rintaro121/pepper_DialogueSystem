@@ -5,11 +5,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.animation.Animation;
 
 import com.aldebaran.qi.sdk.QiContext;
 import com.aldebaran.qi.sdk.QiSDK;
 import com.aldebaran.qi.sdk.RobotLifecycleCallbacks;
+import com.aldebaran.qi.sdk.builder.AnimateBuilder;
 import com.aldebaran.qi.sdk.builder.AnimationBuilder;
 import com.aldebaran.qi.sdk.builder.ChatBuilder;
 import com.aldebaran.qi.sdk.builder.ListenBuilder;
@@ -18,6 +18,8 @@ import com.aldebaran.qi.sdk.builder.QiChatbotBuilder;
 import com.aldebaran.qi.sdk.builder.SayBuilder;
 import com.aldebaran.qi.sdk.builder.TopicBuilder;
 import com.aldebaran.qi.sdk.design.activity.RobotActivity;
+import com.aldebaran.qi.sdk.object.actuation.Animate;
+import com.aldebaran.qi.sdk.object.actuation.Animation;
 import com.aldebaran.qi.sdk.object.conversation.Chat;
 import com.aldebaran.qi.sdk.object.conversation.Listen;
 import com.aldebaran.qi.sdk.object.conversation.ListenResult;
@@ -34,19 +36,11 @@ public class MainActivity extends RobotActivity implements RobotLifecycleCallbac
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         // 上の行でres/layout/activait_main.xmlを基にレイアウトの作成を行っている
-        //layoutで設定したボタンはonclickでボタンにする（メソッドの名前は同じにする）
+        //　layoutで設定したボタンはonclickでボタンにする（メソッドの名前は同じにする）
         // layout上の文字列を変化させるにはidで紐づけて変化させるtextviewを使用する．
 
-        //QiSDK.register(this, this);
         QiSDK.register(this, this);
 
-        //mediaPlayer = MediaPlayer.create(this, R.raw.test);
-        //mediaPlayer.start();
-
-        //mediaPlayer.start(); // no need to call prepare(); create() does that for you
-
-        //mediaPlayer.release();
-        //mediaPlayer = null;
     }
 
     @Override
@@ -72,7 +66,8 @@ public class MainActivity extends RobotActivity implements RobotLifecycleCallbac
          */
 
         PhraseSet phraseSet = PhraseSetBuilder.with(qiContext)
-                .withTexts("いまい","いまいけん","すぎうらけん","こんにちは")
+                .withTexts("あまのけん","いまいけん","おおつきけん","かねこけん","こうのけん","さいとうけん","ささせけん","しげのけん",
+                        "すぎうらけん","すぎもとけん","たかだけん","てらおかけん","とおやまけん","はぎわらけん","ふじしろけん","まつたにけん","やまさきけん","やまなかけん","こんにちは")
                 .build();
 
 
@@ -89,9 +84,46 @@ public class MainActivity extends RobotActivity implements RobotLifecycleCallbac
             String return_str = "";
 
             switch (heard_str){
+                case "あまのけん":
+                    return_str = heard_str + "と，ながのめい，で韻が踏めます";
+                    break;
                 case "いまいけん":
                     return_str = heard_str + "と，しがいせん，で韻が踏めます";
                     break;
+                case "おおつきけん":
+                    return_str = heard_str + "と，ドル紙幣，で韻が踏めます";
+                    break;
+                case "こうのけん":
+                    return_str = heard_str + "と，オットセイ，で韻が踏めます";
+                    break;
+                case "さいとうけん":
+                    return_str = heard_str + "と，あいふぉん てん，で韻が踏めます";
+                    break;
+                case "ささせけん":
+                    return_str = heard_str + "と，わたべけん，で韻が踏めます";
+                    break;
+                case "すぎうらけん":
+                    return_str = heard_str + "と，スキルがねぇ，で韻が踏めます";
+                    break;
+                case "たかだけん":
+                    return_str = heard_str + "と，アンハサウェイ，で韻が踏めます";
+                    break;
+                case "てらおかけん":
+                    return_str = heard_str + "と，エアジョーダン，で韻が踏めます";
+                    break;
+                case "はぎわらけん":
+                    return_str = heard_str + "と，さいたまけん，で韻が踏めます";
+                    break;
+                case "まつたにけん":
+                    return_str = heard_str + "と，やすだきねん，で韻が踏めます";
+                    break;
+                case "やまさきけん":
+                    return_str = heard_str + "と，またらいねん，で韻が踏めます";
+                    break;
+                case "やまなかけん":
+                    return_str = heard_str + "と，あたまがへん，で韻が踏めます．";
+                    break;
+                    
                 case "こんにちは":
                     return_str = heard_str + "と，おうちじかん，で韻が踏めます";
                     break;
@@ -99,24 +131,29 @@ public class MainActivity extends RobotActivity implements RobotLifecycleCallbac
                     return_str = "";
             }
 
+            Animation animation = AnimationBuilder.with(qiContext).withResources(R.raw.thinking_a001).build();
+            Animate animate = AnimateBuilder.with(qiContext).withAnimation(animation).build();
+            animate.run();
+
             if (return_str.equals("")){
-                Say say = SayBuilder.with(qiContext).withText("すみません，よくわかりません").build();
+                Say say = SayBuilder.with(qiContext).withText("すみません，おもいつきません").build();
                 say.run();
+
+                animation = AnimationBuilder.with(qiContext).withResources(R.raw.sad_a001).build();
+                animate = AnimateBuilder.with(qiContext).withAnimation(animation).build();
+                animate.run();
 
             }else{
                 Say say = SayBuilder.with(qiContext).withText(return_str).build();
                 say.run();
+
+                animation = AnimationBuilder.with(qiContext).withResources(R.raw.left_hand_low_b001).build();
+                animate = AnimateBuilder.with(qiContext).withAnimation(animation).build();
+                animate.run();
+
             }
         }
-
-
-
-
-        //Say say = SayBuilder.with(qiContext).withText(listenResult.getHeardPhrase().getText() + "と，しがいせん，で韻が踏めます").build();
-        //say.run();
-
         // https://qisdk.softbankrobotics.com/sdk/doc/pepper-sdk/ch4_api/conversation/reference/chat.html
-
     }
 
     @Override
