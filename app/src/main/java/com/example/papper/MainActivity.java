@@ -27,6 +27,11 @@ import com.aldebaran.qi.sdk.object.conversation.PhraseSet;
 import com.aldebaran.qi.sdk.object.conversation.QiChatbot;
 import com.aldebaran.qi.sdk.object.conversation.Say;
 import com.aldebaran.qi.sdk.object.conversation.Topic;
+import com.aldebaran.qi.sdk.object.touch.Touch;
+import com.aldebaran.qi.sdk.object.touch.TouchSensor;
+import com.aldebaran.qi.sdk.object.touch.TouchState;
+
+import java.util.List;
 
 public class MainActivity extends RobotActivity implements RobotLifecycleCallbacks {
     MediaPlayer mediaPlayer;
@@ -57,13 +62,46 @@ public class MainActivity extends RobotActivity implements RobotLifecycleCallbac
     public void onRobotFocusGained(QiContext qiContext) {
         Log.i("MyTag","onRobotFocusGained");
 
-        /*
-        Say say = SayBuilder.with(qiContext).withText("音楽を流します").build();
-        say.run();
+        // Say say = SayBuilder.with(qiContext).withText("音楽を流します").build();
+        // say.run();
+        // mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.test);
+        // mediaPlayer.start();
 
-        mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.test);
-        mediaPlayer.start();
+
+        //Say say = SayBuilder.with(qiContext).withText("あたまをなでてね").build();
+        //say.run();
+
+        Touch touch = qiContext.getTouch();
+        TouchSensor touchSensor = touch.getSensor("Head/Touch");
+
+        touchSensor.addOnStateChangedListener(touchState -> {
+            if (touchState.getTouched()){
+
+                Animation animation = AnimationBuilder.with(qiContext).withResources(R.raw.left_hand_low_b001).build();
+                Animate animate = AnimateBuilder.with(qiContext).withAnimation(animation).build();
+                animate.run();
+
+            }
+        });
+
+
+
+        /*
+        Touch touch = qiContext.getTouch();
+        List<String> sensorNames = touch.getSensorNames();
+
+        TouchSensor touchSensor = touch.getSensor("Head/Touch");
+        TouchState touchState = touchSensor.getState();
+        if (touchState.getTouched()){
+
+            Animation animation = AnimationBuilder.with(qiContext).withResources(R.raw.left_hand_low_b001).build();
+            Animate animate = AnimateBuilder.with(qiContext).withAnimation(animation).build();
+            animate.run();
+
+        }
+
          */
+
 
         PhraseSet phraseSet = PhraseSetBuilder.with(qiContext)
                 .withTexts("あまのけん","いまいけん","おおつきけん","かねこけん","こうのけん","さいとうけん","ささせけん","しげのけん",
@@ -72,6 +110,10 @@ public class MainActivity extends RobotActivity implements RobotLifecycleCallbac
 
 
         while (true){
+
+            Say say = SayBuilder.with(qiContext).withText("韻を踏みたい言葉をいってね").build();
+            say.run();
+
             Listen listen = ListenBuilder.with(qiContext)
                     .withPhraseSet(phraseSet)
                     .build();
@@ -123,10 +165,7 @@ public class MainActivity extends RobotActivity implements RobotLifecycleCallbac
                 case "やまなかけん":
                     return_str = heard_str + "と，あたまがへん，で韻が踏めます．";
                     break;
-                    
-                case "こんにちは":
-                    return_str = heard_str + "と，おうちじかん，で韻が踏めます";
-                    break;
+
                 default:
                     return_str = "";
             }
@@ -136,15 +175,18 @@ public class MainActivity extends RobotActivity implements RobotLifecycleCallbac
             animate.run();
 
             if (return_str.equals("")){
-                Say say = SayBuilder.with(qiContext).withText("すみません，おもいつきません").build();
+                say = SayBuilder.with(qiContext).withText("すみません，おもいつきません").build();
                 say.run();
 
                 animation = AnimationBuilder.with(qiContext).withResources(R.raw.sad_a001).build();
                 animate = AnimateBuilder.with(qiContext).withAnimation(animation).build();
                 animate.run();
 
+            }else if(heard_str.equals("すぎうらけん")){
+                say = SayBuilder.with(qiContext).withText("すみません，よくわかりません").build();
+                say.run();
             }else{
-                Say say = SayBuilder.with(qiContext).withText(return_str).build();
+                say = SayBuilder.with(qiContext).withText(return_str).build();
                 say.run();
 
                 animation = AnimationBuilder.with(qiContext).withResources(R.raw.left_hand_low_b001).build();
@@ -154,6 +196,8 @@ public class MainActivity extends RobotActivity implements RobotLifecycleCallbac
             }
         }
         // https://qisdk.softbankrobotics.com/sdk/doc/pepper-sdk/ch4_api/conversation/reference/chat.html
+
+
     }
 
     @Override
